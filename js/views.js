@@ -557,8 +557,8 @@ function StudyMode({ cards, subject, dueOnly, onDone, onResult }) {
           <span style={{ color: 'var(--red)' }}>A{res.again}</span><span style={{ color: 'var(--yel)' }}>H{res.hard}</span><span style={{ color: 'var(--g)' }}>G{res.good}</span><span style={{ color: 'var(--cyn)' }}>E{res.easy}</span>
         </div>
       </div>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: mobile ? '14px 12px' : '32px' }}>
-        <div style={{ width: '100%', maxWidth: '660px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ margin: 'auto', width: '100%', maxWidth: '660px', padding: mobile ? '14px 12px' : '32px' }}>
           <div style={{ fontSize: '10px', color: 'var(--mu)', marginBottom: '12px', letterSpacing: '0.1em' }}>{card.subject} - {flipped ? 'RESPOSTA' : 'PERGUNTA'}</div>
           <div onClick={() => !flipped && setFlipped(true)} style={{ border: `1px solid ${flipped ? 'var(--gm)' : 'var(--bdb)'}`, background: flipped ? 'var(--gf)' : 'var(--bg2)', padding: '34px', minHeight: '170px', cursor: flipped ? 'default' : 'pointer', transition: 'all .2s', animation: 'up .15s ease', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
             {!flipped && <div style={{ position: 'absolute', bottom: '10px', right: '13px', fontSize: '11px', color: 'var(--mu)' }}>[ clique para revelar ]</div>}
@@ -575,7 +575,7 @@ function StudyMode({ cards, subject, dueOnly, onDone, onResult }) {
               </div>
             ) : <CardContent text={card.front} image={card.frontImage} large color="var(--g)" />}
           </div>
-          <div style={{ marginTop: '18px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+          <div style={{ marginTop: '18px', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', flexDirection: mobile ? 'column' : 'row', alignItems: mobile ? 'stretch' : 'center' }}>
             {flipped ? <>
               <TBtn onClick={() => answer('again')} color="red">[ AGAIN {cardIntervals.again} ]</TBtn>
               <TBtn onClick={() => answer('hard')} color="yellow">[ HARD {cardIntervals.hard} ]</TBtn>
