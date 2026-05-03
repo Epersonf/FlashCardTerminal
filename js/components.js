@@ -68,11 +68,40 @@ function TabBtn({ label, active, onClick, color = 'var(--g)' }) {
 
 // ------------------------------------------------------------
 function Header({ data, mode, onHome, onPomodoro, onFlashcards, onExport, onImport, onConnectFile, fileLabel, storageStatus, fileSupported }) {
+  const mobile = useMobile();
   const [t, setT] = React.useState(new Date());
+  const [menuOpen, setMenuOpen] = React.useState(false);
   React.useEffect(() => { const i = setInterval(() => setT(new Date()), 1000); return () => clearInterval(i); }, []);
   const ts = t.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const pomToday = data.pomodoroHistory.filter(h => h.date === today()).reduce((a, h) => a + h.count, 0);
-  const navClick = (e, fn, hash) => { if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return; e.preventDefault(); history.replaceState(null, '', hash); fn(); };
+  const navClick = (e, fn, hash) => { if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return; e.preventDefault(); history.replaceState(null, '', hash); fn(); setMenuOpen(false); };
+
+  if (mobile) {
+    return (
+      <div style={{ flexShrink: 0, position: 'relative', zIndex: 50 }}>
+        <div style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--bd)', padding: '0 12px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <a className="glow" href="#home" onClick={e => navClick(e, onHome, '#home')} style={{ textDecoration: 'none', color: 'var(--g)', fontSize: '13px', fontWeight: 700, letterSpacing: '0.08em', cursor: 'pointer' }}>FLASHCARDS.SH</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {pomToday > 0 && <span style={{ color: 'var(--oran)', fontSize: '10px' }}>&#x1F345;{pomToday}</span>}
+            <span style={{ color: 'var(--yel)', fontSize: '11px', letterSpacing: '0.06em' }}>{data.streak.count}d</span>
+            <span style={{ color: 'var(--mu)', fontSize: '11px' }}>{ts.slice(0, 5)}</span>
+            <button onClick={() => setMenuOpen(m => !m)} style={{ background: 'transparent', border: `1px solid ${menuOpen ? 'var(--g)' : 'var(--bd)'}`, color: menuOpen ? 'var(--g)' : 'var(--mu)', fontSize: '15px', padding: '1px 9px 3px', cursor: 'pointer', lineHeight: 1 }}>&#x22EF;</button>
+          </div>
+        </div>
+        {menuOpen && (
+          <div style={{ position: 'absolute', top: '100%', right: 0, left: 0, background: 'var(--bg2)', borderBottom: '1px solid var(--bd)', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px', animation: 'up .1s ease', zIndex: 100 }}>
+            {fileSupported && <button onClick={() => { onConnectFile(); setMenuOpen(false); }} style={{ background: 'transparent', border: '1px solid var(--bd)', color: fileLabel ? 'var(--g)' : 'var(--mu)', fontSize: '11px', padding: '8px 10px', cursor: 'pointer', textAlign: 'left', letterSpacing: '0.04em' }}>{fileLabel ? `ARQUIVO: ${storageStatus}` : '[ CONECTAR JSON ]'}</button>}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => { onExport(); setMenuOpen(false); }} style={{ flex: 1, background: 'transparent', border: '1px solid var(--bd)', color: 'var(--mu)', fontSize: '11px', padding: '8px', cursor: 'pointer', letterSpacing: '0.04em' }}>[ EXPORTAR ]</button>
+              <button onClick={() => { onImport(); setMenuOpen(false); }} style={{ flex: 1, background: 'transparent', border: '1px solid var(--bd)', color: 'var(--mu)', fontSize: '11px', padding: '8px', cursor: 'pointer', letterSpacing: '0.04em' }}>[ IMPORTAR ]</button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop
   return (
     <div style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--bd)', padding: '0 20px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>

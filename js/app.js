@@ -20,11 +20,31 @@ async function uploadMedia(file) {
   });
 }
 
+// Barra de navegação inferior para mobile
+function BottomNav({ mode, onHome, onFlashcards, onPomodoro, onAddCard }) {
+  const items = [
+    { label: 'HOME', m: 'home', fn: onHome, col: 'var(--g)' },
+    { label: 'CARDS', m: 'dashboard', fn: onFlashcards, col: 'var(--cyn)' },
+    { label: 'POMO', m: 'pomodoro', fn: onPomodoro, col: 'var(--oran)' },
+    { label: '+ ADD', m: 'addcard', fn: onAddCard, col: 'var(--cyn)' },
+  ];
+  return (
+    <div className="bnav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '52px', background: 'var(--bg2)', borderTop: '1px solid var(--bd)', display: 'flex', alignItems: 'stretch', zIndex: 200 }}>
+      {items.map(({ label, m, fn, col }) => (
+        <button key={m} onClick={fn} style={{ flex: 1, background: mode === m ? 'var(--gf)' : 'transparent', border: 'none', borderTop: `2px solid ${mode === m ? col : 'transparent'}`, color: mode === m ? col : 'var(--mu)', fontSize: '10px', letterSpacing: '0.08em', cursor: 'pointer', transition: 'all .1s', padding: '6px 2px', fontFamily: 'inherit' }}>
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ------------------------------------------------------------
 // Componente raiz
 // ------------------------------------------------------------
 function App() {
   const fileSupported = !!(window.showOpenFilePicker && window.showSaveFilePicker);
+  const mobile = useMobile();
   const [data, setData] = React.useState(null);
   const [view, setView] = React.useState('home');
   const [studySubject, setStudySubject] = React.useState(null);
@@ -329,6 +349,7 @@ function App() {
   }
 
   const showSidebar = !['pomodoro', 'study'].includes(view);
+  const showBottomNav = mobile && showSidebar;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
@@ -345,10 +366,19 @@ function App() {
         onImport={importData}
         onConnectFile={fileHandle ? () => { setFileHandle(null); setFileLabel(''); } : connectDataFile}
       />
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {showSidebar && sidebar}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', paddingBottom: showBottomNav ? '52px' : 0 }}>
+        {showSidebar && !mobile && sidebar}
         {content}
       </div>
+      {showBottomNav && (
+        <BottomNav
+          mode={view}
+          onHome={() => navigate('home')}
+          onFlashcards={() => { setStudySubject(null); navigate('dashboard'); }}
+          onPomodoro={() => navigate('pomodoro')}
+          onAddCard={() => navigate('addcard')}
+        />
+      )}
     </div>
   );
 }

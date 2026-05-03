@@ -164,6 +164,7 @@ function PomodoroMode({ subjects, cards, settings, todaySessionCount = 0, onDone
     setPomoFlipped(false);
   };
 
+  const mobile = useMobile();
   const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0'), secs = String(timeLeft % 60).padStart(2, '0');
   const modeColor = MODES[timerMode].color;
   const progress = ((getDur(timerMode, localSettings) - timeLeft) / getDur(timerMode, localSettings)) * 100;
@@ -171,20 +172,20 @@ function PomodoroMode({ subjects, cards, settings, todaySessionCount = 0, onDone
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: flash ? '#002f0a' : 'var(--bg)', transition: 'background .3s', animation: 'up .2s ease' }}>
-      <div style={{ padding: '11px 22px', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg2)', flexShrink: 0 }}>
+      <div style={{ padding: mobile ? '8px 12px' : '11px 22px', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg2)', flexShrink: 0, flexWrap: 'wrap' }}>
         <TBtn onClick={onDone} color="muted" sm>[ SAIR ]</TBtn>
-        <span style={{ color: 'var(--mu)', fontSize: '12px' }}>user@fc:~/pomodoro$</span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {!mobile && <span style={{ color: 'var(--mu)', fontSize: '12px' }}>user@fc:~/pomodoro$</span>}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: mobile ? '4px' : '8px' }}>
           {Array.from({ length: localSettings.longBreakInterval }).map((_, i) => (
-            <div key={i} style={{ width: '10px', height: '10px', border: `1px solid ${modeColor}`, background: i < dotsFilled ? modeColor : 'transparent', transition: 'background .2s' }} />
+            <div key={i} style={{ width: mobile ? '8px' : '10px', height: mobile ? '8px' : '10px', border: `1px solid ${modeColor}`, background: i < dotsFilled ? modeColor : 'transparent', transition: 'background .2s' }} />
           ))}
-          <span style={{ color: 'var(--mu)', fontSize: '11px', marginLeft: '6px' }}>{sessionCount} sessoes</span>
+          <span style={{ color: 'var(--mu)', fontSize: '11px', marginLeft: '4px' }}>{sessionCount}x</span>
         </div>
         <TBtn onClick={() => setShowSettings(s => !s)} color="muted" sm>[ CONFIG ]</TBtn>
       </div>
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px', gap: '20px', overflowY: 'auto' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: mobile ? '20px 14px' : '32px', gap: '20px', overflowY: 'auto' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
             {Object.entries(MODES).map(([k, v]) => (
               <button key={k} onClick={() => switchMode(k)} style={{ border: `1px solid ${timerMode === k ? v.color : 'var(--bd)'}`, color: timerMode === k ? v.color : 'var(--mu)', background: 'transparent', padding: '5px 16px', fontSize: '12px', cursor: 'pointer', letterSpacing: '0.06em', transition: 'all .15s' }}>{v.label}</button>
             ))}
@@ -192,7 +193,7 @@ function PomodoroMode({ subjects, cards, settings, todaySessionCount = 0, onDone
           <div style={{ width: '100%', maxWidth: '460px' }}>
             <div style={{ height: '2px', background: 'var(--bd)', marginBottom: '30px' }}><div style={{ height: '100%', width: `${progress}%`, background: modeColor, transition: 'width 1s linear' }} /></div>
             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-              <div style={{ fontSize: '96px', fontWeight: 700, letterSpacing: '0.06em', color: modeColor, lineHeight: 1, animation: running ? `${timerMode === 'focus' ? 'pomopulse' : 'cpulse'} 2s ease-in-out infinite` : 'none' }}>
+              <div style={{ fontSize: mobile ? '72px' : '96px', fontWeight: 700, letterSpacing: '0.06em', color: modeColor, lineHeight: 1, animation: running ? `${timerMode === 'focus' ? 'pomopulse' : 'cpulse'} 2s ease-in-out infinite` : 'none' }}>
                 {mins}<span style={{ opacity: running && timeLeft % 2 === 0 ? 0.25 : 1, transition: 'opacity .1s' }}>:</span>{secs}
               </div>
               <div style={{ fontSize: '12px', color: 'var(--mu)', marginTop: '8px', letterSpacing: '0.1em' }}>{MODES[timerMode].label} - {localSettings[MODES[timerMode].key]} min</div>
@@ -255,7 +256,7 @@ function PomodoroMode({ subjects, cards, settings, todaySessionCount = 0, onDone
           </div>
         </div>
         {showSettings && (
-          <div style={{ width: '260px', borderLeft: '1px solid var(--bd)', background: 'var(--bg2)', padding: '20px', flexShrink: 0, overflowY: 'auto', animation: 'up .15s ease' }}>
+          <div style={mobile ? { position: 'absolute', inset: 0, background: 'var(--bg2)', padding: '16px', overflowY: 'auto', animation: 'up .15s ease', zIndex: 10 } : { width: '260px', borderLeft: '1px solid var(--bd)', background: 'var(--bg2)', padding: '20px', flexShrink: 0, overflowY: 'auto', animation: 'up .15s ease' }}>
             <div style={{ fontSize: '10px', color: 'var(--mu)', letterSpacing: '0.12em', marginBottom: '18px' }}>// CONFIGURACOES</div>
             {[{ label: 'FOCO (min)', key: 'focusDuration', min: 1, max: 120 }, { label: 'PAUSA CURTA (min)', key: 'shortBreak', min: 1, max: 30 }, { label: 'PAUSA LONGA (min)', key: 'longBreak', min: 1, max: 60 }, { label: 'SESSOES p/ LONGA', key: 'longBreakInterval', min: 2, max: 10 }].map(({ label, key, min, max }) => (
               <div key={key} style={{ marginBottom: '16px' }}>
@@ -296,6 +297,7 @@ function PomodoroMode({ subjects, cards, settings, todaySessionCount = 0, onDone
 
 // ------------------------------------------------------------
 function HomeScreen({ data, onNavigate }) {
+  const mobile = useMobile();
   const [time, setTime] = React.useState(new Date());
   const alreadyBooted = !!localStorage.getItem(BOOT_KEY);
   const [showBoot, setShowBoot] = React.useState(!alreadyBooted);
@@ -327,7 +329,7 @@ function HomeScreen({ data, onNavigate }) {
   }, []);
 
   if (showBoot) return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '60px 80px', gap: '5px' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: mobile ? '32px 24px' : '60px 80px', gap: '5px' }}>
       {bootMsgs.slice(0, lines).map((line, i) => (
         <div key={i} style={{ fontSize: '13px', color: i === lines - 1 ? 'var(--g)' : 'var(--mu)', animation: 'bootL .18s ease', overflow: 'hidden' }}>
           {line}{i === lines - 1 && <span style={{ animation: 'blink 1s step-end infinite', marginLeft: '2px' }}>_</span>}
@@ -354,16 +356,16 @@ function HomeScreen({ data, onNavigate }) {
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', animation: 'up .2s ease' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '26px 44px 22px', borderBottom: '1px solid var(--bd)', flexShrink: 0 }}>
+      <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', alignItems: mobile ? 'flex-start' : 'center', justifyContent: 'space-between', padding: mobile ? '14px 16px 12px' : '26px 44px 22px', borderBottom: '1px solid var(--bd)', flexShrink: 0, gap: mobile ? '12px' : 0 }}>
         <div>
           <div style={{ fontSize: '10px', color: 'var(--mu)', letterSpacing: '0.14em', marginBottom: '5px' }}>{dateStr.toUpperCase()}</div>
-          <div style={{ fontSize: '62px', fontWeight: 700, lineHeight: 1, animation: 'cpulse 2s ease-in-out infinite', color: 'var(--g)', letterSpacing: '0.03em' }}>
+          <div style={{ fontSize: mobile ? '44px' : '62px', fontWeight: 700, lineHeight: 1, animation: 'cpulse 2s ease-in-out infinite', color: 'var(--g)', letterSpacing: '0.03em' }}>
             {hh}<span style={{ opacity: time.getSeconds() % 2 === 0 ? 1 : 0.2, transition: 'opacity .1s' }}>:</span>{mm}
             <span style={{ fontSize: '28px', opacity: 0.4, marginLeft: '5px' }}>{ss}</span>
           </div>
           <div style={{ fontSize: '14px', color: 'var(--gd)', marginTop: '6px', fontWeight: 300 }}>{greeting} - {dueNow > 0 ? `${dueNow} card${dueNow > 1 ? 's' : ''} para revisar` : 'tudo em dia!'}</div>
         </div>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: mobile ? 'flex-start' : 'flex-end' }}>
           {[
             { label: 'CARDS', val: data.cards.length, c: 'var(--g)' },
             { label: 'PENDENTES', val: dueNow, c: dueNow > 0 ? 'var(--yel)' : 'var(--cyn)' },
@@ -373,14 +375,14 @@ function HomeScreen({ data, onNavigate }) {
             { label: 'FOCO SEM', val: formatHours(focusWeek), c: 'var(--oran)' },
             { label: 'FOCO ANO', val: formatHours(focusYear), c: 'var(--oran)' },
           ].map(s => (
-            <div key={s.label} style={{ border: '1px solid var(--bd)', background: 'var(--bg2)', padding: '12px 16px', textAlign: 'center', minWidth: '78px' }}>
-              <div style={{ fontSize: '24px', fontWeight: 700, color: s.c, lineHeight: 1 }}>{s.val}</div>
+            <div key={s.label} style={{ border: '1px solid var(--bd)', background: 'var(--bg2)', padding: mobile ? '8px 10px' : '12px 16px', textAlign: 'center', minWidth: mobile ? '60px' : '78px' }}>
+              <div style={{ fontSize: mobile ? '18px' : '24px', fontWeight: 700, color: s.c, lineHeight: 1 }}>{s.val}</div>
               <div style={{ fontSize: '9px', color: 'var(--mu)', letterSpacing: '0.12em', marginTop: '4px' }}>{s.label}</div>
             </div>
           ))}
         </div>
       </div>
-      <div style={{ padding: '14px 44px', borderBottom: '1px solid var(--bd)', display: 'flex', gap: '9px', flexWrap: 'wrap', flexShrink: 0 }}>
+      <div style={{ padding: mobile ? '10px 16px' : '14px 44px', borderBottom: '1px solid var(--bd)', display: 'flex', gap: '8px', flexWrap: 'wrap', flexShrink: 0 }}>
         <TBtn onClick={() => onNavigate('study', null)} disabled={dueNow === 0}>[ REVISAR ({dueNow}) ]</TBtn>
         <TBtn onClick={() => onNavigate('pomodoro', null)} color="orange">[ POMODORO ]</TBtn>
         <TBtn onClick={() => onNavigate('study-all', null)} color="muted">[ ESTUDAR TODOS ]</TBtn>
@@ -388,7 +390,7 @@ function HomeScreen({ data, onNavigate }) {
         <TBtn onClick={() => onNavigate('import', null)} color="yellow">[ IMPORTAR ]</TBtn>
         <TBtn onClick={() => onNavigate('dashboard', null)} color="muted">[ VER CARDS ]</TBtn>
       </div>
-      <div style={{ flex: 1, padding: '20px 44px', display: 'grid', gridTemplateColumns: '1fr 520px', gap: '18px', alignItems: 'start' }}>
+      <div style={{ flex: 1, padding: mobile ? '14px 16px' : '20px 44px', display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 520px', gap: '18px', alignItems: 'start', overflowY: 'auto' }}>
         <div>
           <div style={{ fontSize: '10px', color: 'var(--mu)', letterSpacing: '0.14em', marginBottom: '12px' }}>PROGRESSO POR ASSUNTO</div>
           {subjStats.length === 0 && <div style={{ fontSize: '13px', color: 'var(--mu)' }}>Nenhum assunto ainda.</div>}
@@ -463,7 +465,7 @@ function Dashboard({ cards, subjects, activeSubject, onStudy, onStudyAll, onAddC
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}><TBtn onClick={onAddCard} color="cyan">[ + ADICIONAR ]</TBtn><TBtn onClick={onImport} color="yellow">[ IMPORTAR ]</TBtn></div>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(300px,100%),1fr))', gap: '10px' }}>
             {filtered.map(card => {
               const t = card.correct + card.wrong + (card.hard || 0) + (card.easy || 0), p = t === 0 ? null : Math.round((card.correct + (card.easy || 0)) / t * 100);
               const cardDue = isDue(card);
@@ -497,6 +499,7 @@ function Dashboard({ cards, subjects, activeSubject, onStudy, onStudyAll, onAddC
 
 // ------------------------------------------------------------
 function StudyMode({ cards, subject, dueOnly, onDone, onResult }) {
+  const mobile = useMobile();
   const queue = React.useMemo(() => { let pool = subject ? cards.filter(c => c.subject === subject) : [...cards]; if (dueOnly) pool = pool.filter(isDue); return pool.sort(() => Math.random() - .5); }, []);
   const [idx, setIdx] = React.useState(0);
   const [flipped, setFlipped] = React.useState(false);
@@ -530,15 +533,15 @@ function StudyMode({ cards, subject, dueOnly, onDone, onResult }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{ height: '3px', background: 'var(--bg3)', flexShrink: 0 }}><div style={{ height: '100%', width: `${Math.round(idx / queue.length * 100)}%`, background: 'var(--g)', transition: 'width .3s' }} /></div>
-      <div style={{ padding: '11px 22px', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--bg2)', flexShrink: 0 }}>
+      <div style={{ padding: '11px 22px', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg2)', flexShrink: 0, flexWrap: 'wrap' }}>
         <TBtn onClick={onDone} color="muted" sm>[ SAIR ]</TBtn>
         <span style={{ color: 'var(--mu)', fontSize: '12px' }}>{idx + 1}/{queue.length} - {subject || 'todos'}</span>
-        <span style={{ color: 'var(--mu)', fontSize: '10px' }}>estado: {(card.state || 'new').toUpperCase()} - prox: {dueLabel(card)} - ease {(card.ease || 2.5).toFixed(2)}</span>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px', fontSize: '12px' }}>
+        {!mobile && <span style={{ color: 'var(--mu)', fontSize: '10px' }}>estado: {(card.state || 'new').toUpperCase()} - prox: {dueLabel(card)} - ease {(card.ease || 2.5).toFixed(2)}</span>}
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '10px', fontSize: '12px' }}>
           <span style={{ color: 'var(--red)' }}>A{res.again}</span><span style={{ color: 'var(--yel)' }}>H{res.hard}</span><span style={{ color: 'var(--g)' }}>G{res.good}</span><span style={{ color: 'var(--cyn)' }}>E{res.easy}</span>
         </div>
       </div>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: mobile ? '14px 12px' : '32px' }}>
         <div style={{ width: '100%', maxWidth: '660px' }}>
           <div style={{ fontSize: '10px', color: 'var(--mu)', marginBottom: '12px', letterSpacing: '0.1em' }}>{card.subject} - {flipped ? 'RESPOSTA' : 'PERGUNTA'}</div>
           <div onClick={() => !flipped && setFlipped(true)} style={{ border: `1px solid ${flipped ? 'var(--gm)' : 'var(--bdb)'}`, background: flipped ? 'var(--gf)' : 'var(--bg2)', padding: '34px', minHeight: '170px', cursor: flipped ? 'default' : 'pointer', transition: 'all .2s', animation: 'up .15s ease', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
@@ -572,6 +575,7 @@ function StudyMode({ cards, subject, dueOnly, onDone, onResult }) {
 
 // ------------------------------------------------------------
 function AddCard({ subjects, defaultSubject, editingCard, onSave, onCancel }) {
+  const mobile = useMobile();
   const [front, setFront] = React.useState(editingCard?.front || '');
   const [back, setBack] = React.useState(editingCard?.back || '');
   const [frontImage, setFrontImage] = React.useState(editingCard?.frontImage || null);
@@ -607,7 +611,7 @@ function AddCard({ subjects, defaultSubject, editingCard, onSave, onCancel }) {
         <TBtn onClick={onCancel} color="muted" sm>[ VOLTAR ]</TBtn>
         <span style={{ color: 'var(--mu)', fontSize: '12px' }}>user@fc:~/{editingCard ? 'editar-card' : 'novo-card'}$</span>
       </div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 36px', maxWidth: '620px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: mobile ? '16px' : '28px 36px', maxWidth: '620px' }}>
         <div style={{ fontSize: '10px', color: 'var(--mu)', marginBottom: '20px', letterSpacing: '0.1em' }}>{editingCard ? '// EDITAR FLASHCARD' : '// NOVO FLASHCARD'}</div>
         <Field label="ASSUNTO"><TSelect value={subject} onChange={setSubject} options={subjectOptions} /></Field>
         <Field label="FRENTE (PERGUNTA)"><TArea value={front} onChange={setFront} onPaste={pasteImageTo(setFrontImage)} placeholder="Digite a pergunta... Ctrl+V cola imagem aqui" rows={3} /></Field>
@@ -623,6 +627,7 @@ function AddCard({ subjects, defaultSubject, editingCard, onSave, onCancel }) {
 
 // ------------------------------------------------------------
 function ImportView({ subjects, onImport, onCancel }) {
+  const mobile = useMobile();
   const [raw, setRaw] = React.useState('');
   const [subject, setSubject] = React.useState(subjects[0] || '');
   const [preview, setPreview] = React.useState([]);
@@ -642,7 +647,7 @@ function ImportView({ subjects, onImport, onCancel }) {
         <TBtn onClick={onCancel} color="muted" sm>[ VOLTAR ]</TBtn>
         <span style={{ color: 'var(--mu)', fontSize: '12px' }}>user@fc:~/importar$</span>
       </div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 36px', maxWidth: '780px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: mobile ? '16px' : '28px 36px', maxWidth: '780px' }}>
         <div style={{ fontSize: '10px', color: 'var(--mu)', marginBottom: '4px', letterSpacing: '0.1em' }}>// IMPORTAR CARDS</div>
         <div style={{ fontSize: '11px', color: 'var(--gm)', marginBottom: '20px' }}>Formato: FRENTE ; VERSO - aceita ; | tab</div>
         <Field label="ASSUNTO"><TSelect value={subject} onChange={setSubject} options={subjects} /></Field>

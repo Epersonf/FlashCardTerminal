@@ -133,3 +133,14 @@ function nextIntervals(card) {
     easy: (card.state === 'review') ? intervalLabel(Math.max((card.interval || 1) + 2, (card.interval || 1) * (card.ease || 2.5) * ANKI.easyBonus)) : `${ANKI.easyInterval}d`,
   };
 }
+
+// Hook para detectar tela mobile (< 768px)
+function useMobile() {
+  const [w, setW] = React.useState(window.innerWidth);
+  React.useEffect(() => {
+    const fn = () => setW(window.innerWidth);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return w < 768;
+}

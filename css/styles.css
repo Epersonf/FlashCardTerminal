@@ -19,3 +19,11 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 @keyframes flash{0%,100%{background:var(--bg)}50%{background:#003b0a}}
 button,input,textarea,select{font-family:'JetBrains Mono',monospace}
 .glow{text-shadow:0 0 8px var(--g),0 0 20px var(--gm)}
+
+/* ---- Mobile ---- */
+@media (max-width: 767px) {
+  html,body{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  ::-webkit-scrollbar{width:2px}
+  /* bottom nav safe area */
+  .bnav{padding-bottom:env(safe-area-inset-bottom,0px)}
+}
