@@ -1,0 +1,21 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#00ff41;--gd:#00cc33;--gm:#006618;--gf:#002f0a;
+  --bg:#080d08;--bg2:#0d120d;--bg3:#111811;
+  --bd:#1a2e1a;--bdb:#2a4a2a;
+  --red:#ff4444;--yel:#ffd700;--cyn:#00ffcc;--wh:#e0ffe0;--mu:#4a7a4a;--oran:#ff8c00;
+}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden}
+body{font-family:'JetBrains Mono',monospace;color:var(--g)}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9999}
+#root{width:100%;height:100%;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--gm)}
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.97}94%{opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bootL{from{opacity:0;max-height:0}to{opacity:1;max-height:40px}}
+@keyframes cpulse{0%,100%{text-shadow:0 0 12px #00ff41,0 0 40px #006618}50%{text-shadow:0 0 28px #00ff41,0 0 90px #00cc33}}
+@keyframes pomopulse{0%,100%{text-shadow:0 0 16px #ff8c00,0 0 50px #663300}50%{text-shadow:0 0 36px #ff8c00,0 0 100px #ff6600}}
+@keyframes flash{0%,100%{background:var(--bg)}50%{background:#003b0a}}
+button,input,textarea,select{font-family:'JetBrains Mono',monospace}
+.glow{text-shadow:0 0 8px var(--g),0 0 20px var(--gm)}
