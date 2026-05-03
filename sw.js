@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'fct-v1';
+const CACHE_VERSION = 'fct-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './js/views.js',
   './js/app.js',
   './manifest.json',
+  './icon.svg',
 ];
 
 self.addEventListener('install', event => {
@@ -46,13 +47,14 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
-  // For local assets: cache first, fall back to network
+  // For local assets: network first, fall back to cache (ensures updates are always picked up)
   event.respondWith(
-    caches.match(event.request)
-      .then(cached => cached || fetch(event.request).then(response => {
+    fetch(event.request)
+      .then(response => {
         const clone = response.clone();
         caches.open(CACHE_VERSION).then(cache => cache.put(event.request, clone));
         return response;
-      }))
+      })
+      .catch(() => caches.match(event.request))
   );
 });
