@@ -382,14 +382,30 @@ function HomeScreen({ data, onNavigate }) {
           ))}
         </div>
       </div>
-      <div style={{ padding: mobile ? '10px 16px' : '14px 44px', borderBottom: '1px solid var(--bd)', display: 'flex', gap: '8px', flexWrap: 'wrap', flexShrink: 0 }}>
-        <TBtn onClick={() => onNavigate('study', null)} disabled={dueNow === 0}>[ REVISAR ({dueNow}) ]</TBtn>
-        <TBtn onClick={() => onNavigate('pomodoro', null)} color="orange">[ POMODORO ]</TBtn>
-        <TBtn onClick={() => onNavigate('study-all', null)} color="muted">[ ESTUDAR TODOS ]</TBtn>
-        <TBtn onClick={() => onNavigate('addcard', null)} color="cyan">[ + CARD ]</TBtn>
-        <TBtn onClick={() => onNavigate('import', null)} color="yellow">[ IMPORTAR ]</TBtn>
-        <TBtn onClick={() => onNavigate('dashboard', null)} color="muted">[ VER CARDS ]</TBtn>
-      </div>
+      {mobile ? (
+        <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--bd)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', flexShrink: 0 }}>
+          {[
+            { label: 'REVISAR', sub: `${dueNow} pendentes`, col: 'var(--g)', disabled: dueNow === 0, fn: () => onNavigate('study', null) },
+            { label: 'POMODORO', sub: 'modo foco', col: 'var(--oran)', fn: () => onNavigate('pomodoro', null) },
+            { label: 'ESTUDAR TODOS', sub: 'sem filtro de data', col: 'var(--mu)', fn: () => onNavigate('study-all', null) },
+            { label: 'VER CARDS', sub: 'dashboard', col: 'var(--mu)', fn: () => onNavigate('dashboard', null) },
+          ].map(btn => (
+            <button key={btn.label} onClick={btn.fn} disabled={btn.disabled} style={{ background: 'var(--bg2)', border: `1px solid ${btn.disabled ? 'var(--bd)' : btn.col}`, color: btn.disabled ? 'var(--mu)' : btn.col, padding: '12px 10px', textAlign: 'left', cursor: btn.disabled ? 'default' : 'pointer', opacity: btn.disabled ? 0.4 : 1, fontFamily: 'inherit', transition: 'border-color .1s' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.07em' }}>{btn.label}</div>
+              <div style={{ fontSize: '9px', color: 'var(--mu)', marginTop: '3px', letterSpacing: '0.05em' }}>{btn.sub}</div>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div style={{ padding: '14px 44px', borderBottom: '1px solid var(--bd)', display: 'flex', gap: '8px', flexWrap: 'wrap', flexShrink: 0 }}>
+          <TBtn onClick={() => onNavigate('study', null)} disabled={dueNow === 0}>[ REVISAR ({dueNow}) ]</TBtn>
+          <TBtn onClick={() => onNavigate('pomodoro', null)} color="orange">[ POMODORO ]</TBtn>
+          <TBtn onClick={() => onNavigate('study-all', null)} color="muted">[ ESTUDAR TODOS ]</TBtn>
+          <TBtn onClick={() => onNavigate('addcard', null)} color="cyan">[ + CARD ]</TBtn>
+          <TBtn onClick={() => onNavigate('import', null)} color="yellow">[ IMPORTAR ]</TBtn>
+          <TBtn onClick={() => onNavigate('dashboard', null)} color="muted">[ VER CARDS ]</TBtn>
+        </div>
+      )}
       <div style={{ flex: 1, padding: mobile ? '14px 16px' : '20px 44px', display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 520px', gap: '18px', alignItems: 'start', overflowY: 'auto' }}>
         <div>
           <div style={{ fontSize: '10px', color: 'var(--mu)', letterSpacing: '0.14em', marginBottom: '12px' }}>PROGRESSO POR ASSUNTO</div>
@@ -417,7 +433,7 @@ function HomeScreen({ data, onNavigate }) {
             })}
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <AnkiChart history={data.history} cards={data.cards} />
           <PomodoroChart pomodoroHistory={data.pomodoroHistory} subjects={data.subjects} />
           <div style={{ border: '1px solid var(--bd)', borderTop: 'none', background: 'var(--bg2)', padding: '12px 16px', fontSize: '11px', color: 'var(--mu)', lineHeight: 1.7 }}>

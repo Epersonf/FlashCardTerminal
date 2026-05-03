@@ -21,21 +21,38 @@ async function uploadMedia(file) {
 }
 
 // Barra de navegação inferior para mobile
-function BottomNav({ mode, onHome, onFlashcards, onPomodoro, onAddCard }) {
-  const items = [
+function BottomNav({ mode, onHome, onFlashcards, onPomodoro, onAddCard, onAddSubject }) {
+  const [showAddMenu, setShowAddMenu] = React.useState(false);
+  const navItems = [
     { label: 'HOME', m: 'home', fn: onHome, col: 'var(--g)' },
     { label: 'CARDS', m: 'dashboard', fn: onFlashcards, col: 'var(--cyn)' },
     { label: 'POMO', m: 'pomodoro', fn: onPomodoro, col: 'var(--oran)' },
-    { label: '+ ADD', m: 'addcard', fn: onAddCard, col: 'var(--cyn)' },
   ];
+  const btnStyle = (active, col) => ({ flex: 1, background: active ? 'var(--gf)' : 'transparent', border: 'none', borderTop: `2px solid ${active ? col : 'transparent'}`, color: active ? col : 'var(--mu)', fontSize: '10px', letterSpacing: '0.08em', cursor: 'pointer', transition: 'all .1s', padding: '6px 2px', fontFamily: 'inherit' });
   return (
-    <div className="bnav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '52px', background: 'var(--bg2)', borderTop: '1px solid var(--bd)', display: 'flex', alignItems: 'stretch', zIndex: 200 }}>
-      {items.map(({ label, m, fn, col }) => (
-        <button key={m} onClick={fn} style={{ flex: 1, background: mode === m ? 'var(--gf)' : 'transparent', border: 'none', borderTop: `2px solid ${mode === m ? col : 'transparent'}`, color: mode === m ? col : 'var(--mu)', fontSize: '10px', letterSpacing: '0.08em', cursor: 'pointer', transition: 'all .1s', padding: '6px 2px', fontFamily: 'inherit' }}>
-          {label}
+    <>
+      {showAddMenu && (
+        <div onClick={() => setShowAddMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 198 }} />
+      )}
+      {showAddMenu && (
+        <div style={{ position: 'fixed', bottom: '60px', right: '12px', zIndex: 201, display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', animation: 'up .12s ease' }}>
+          <button onClick={() => { setShowAddMenu(false); onAddSubject(); }} style={{ background: 'var(--bg2)', border: '1px solid var(--gm)', color: 'var(--g)', fontSize: '12px', padding: '11px 20px', cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
+            + ASSUNTO
+          </button>
+          <button onClick={() => { setShowAddMenu(false); onAddCard(); }} style={{ background: 'var(--bg2)', border: '1px solid var(--cyn)', color: 'var(--cyn)', fontSize: '12px', padding: '11px 20px', cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
+            + CARD
+          </button>
+        </div>
+      )}
+      <div className="bnav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '52px', background: 'var(--bg2)', borderTop: '1px solid var(--bd)', display: 'flex', alignItems: 'stretch', zIndex: 200 }}>
+        {navItems.map(({ label, m, fn, col }) => (
+          <button key={m} onClick={fn} style={btnStyle(mode === m, col)}>{label}</button>
+        ))}
+        <button onClick={() => setShowAddMenu(s => !s)} style={btnStyle(showAddMenu, 'var(--cyn)')}>
+          <span style={{ fontSize: '18px', lineHeight: 1, fontWeight: 300 }}>{showAddMenu ? '×' : '+'}</span>
         </button>
-      ))}
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -349,7 +366,7 @@ function App() {
   }
 
   const showSidebar = !['pomodoro', 'study'].includes(view);
-  const showBottomNav = mobile && showSidebar;
+  const showBottomNav = mobile && view !== 'study';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
@@ -377,6 +394,7 @@ function App() {
           onFlashcards={() => { setStudySubject(null); navigate('dashboard'); }}
           onPomodoro={() => navigate('pomodoro')}
           onAddCard={() => navigate('addcard')}
+          onAddSubject={() => { const name = prompt('Nome do novo assunto:'); if (name && name.trim()) addSubject(name.trim()); }}
         />
       )}
     </div>

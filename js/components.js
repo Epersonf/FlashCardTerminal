@@ -171,6 +171,7 @@ function Sidebar({ subjects, activeSubject, onSelect, onAdd, cards }) {
 
 // ------------------------------------------------------------
 function AnkiChart({ history, cards }) {
+  const mobile = useMobile();
   const [tab, setTab] = React.useState('dias');
   const [offset, setOffset] = React.useState(0);
   const tabs = ['dias', 'meses', 'ano', 'assunto'];
@@ -219,10 +220,10 @@ function AnkiChart({ history, cards }) {
   const iW = W - PL - PR, iH = H - PT - PB, n = chartData.length, bw = Math.max(4, Math.floor(iW / n) - 3);
 
   return (
-    <div style={{ border: '1px solid var(--bd)', background: 'var(--bg2)', padding: '16px 18px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-        <div style={{ fontSize: '10px', color: 'var(--mu)', letterSpacing: '0.12em' }}>HISTORICO DE REVISAO</div>
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+    <div style={{ border: '1px solid var(--bd)', background: 'var(--bg2)', padding: '16px 18px', minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px', gap: '6px', flexWrap: 'wrap' }}>
+        <div style={{ fontSize: '10px', color: 'var(--mu)', letterSpacing: '0.12em', paddingTop: '3px' }}>HISTORICO DE REVISAO</div>
+        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {tab !== 'assunto' && <button onClick={() => setOffset(o => o - 1)} style={{ background: 'transparent', border: '1px solid var(--bd)', color: 'var(--mu)', fontSize: '10px', padding: '2px 7px', cursor: 'pointer' }}>&lt;</button>}
           {tabs.map(t => <TabBtn key={t} label={t.toUpperCase()} active={tab === t} onClick={() => setTab(t)} />)}
           {tab !== 'assunto' && <button onClick={() => setOffset(0)} disabled={offset === 0} title="Periodo atual" style={{ background: 'transparent', border: '1px solid var(--bd)', color: offset === 0 ? '#1a2e1a' : 'var(--g)', fontSize: '10px', padding: '2px 7px', cursor: offset === 0 ? 'default' : 'pointer' }}>HOJE</button>}
@@ -312,10 +313,10 @@ function PomodoroChart({ pomodoroHistory, subjects }) {
   const iW = W - PL - PR, iH = H - PT - PB, n = chartData.length, bw = Math.max(4, Math.floor(iW / n) - 3);
 
   return (
-    <div style={{ border: '1px solid var(--bd)', borderTop: 'none', background: 'var(--bg2)', padding: '16px 18px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-        <div style={{ fontSize: '10px', color: 'var(--oran)', letterSpacing: '0.12em' }}>POMODORO</div>
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+    <div style={{ border: '1px solid var(--bd)', borderTop: 'none', background: 'var(--bg2)', padding: '16px 18px', minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px', gap: '6px', flexWrap: 'wrap' }}>
+        <div style={{ fontSize: '10px', color: 'var(--oran)', letterSpacing: '0.12em', paddingTop: '3px' }}>POMODORO</div>
+        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {tab !== 'assunto' && <button onClick={() => setOffset(o => o - 1)} style={{ background: 'transparent', border: '1px solid var(--bd)', color: 'var(--mu)', fontSize: '10px', padding: '2px 7px', cursor: 'pointer' }}>&lt;</button>}
           {tabs.map(t => <TabBtn key={t} label={t.toUpperCase()} active={tab === t} onClick={() => setTab(t)} color='var(--oran)' />)}
           {tab !== 'assunto' && <button onClick={() => setOffset(0)} disabled={offset === 0} title="Periodo atual" style={{ background: 'transparent', border: '1px solid var(--bd)', color: offset === 0 ? '#1a2e1a' : 'var(--oran)', fontSize: '10px', padding: '2px 7px', cursor: offset === 0 ? 'default' : 'pointer' }}>HOJE</button>}
