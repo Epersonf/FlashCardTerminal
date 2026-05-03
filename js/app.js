@@ -188,7 +188,12 @@ function App() {
   const recordResult = (cardId, grade) => {
     setData(d => ({
       ...d,
-      cards: d.cards.map(c => c.id === cardId ? scheduleCard(c, grade) : c),
+      cards: d.cards.map(c => {
+        if (c.id !== cardId) return c;
+        const scheduled = scheduleCard(c, grade);
+        const counter = grade === 'again' ? 'wrong' : grade === 'hard' ? 'hard' : grade === 'easy' ? 'easy' : 'correct';
+        return { ...c, ...scheduled, [counter]: (c[counter] || 0) + 1 };
+      }),
       history: (() => {
         const todayKey = today();
         const rec = d.history.find(h => h.date === todayKey);

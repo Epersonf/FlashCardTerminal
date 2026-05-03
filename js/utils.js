@@ -20,7 +20,11 @@ function normalizeData(p) {
     cards: (p.cards || []).map(c => ({
       interval: 0, reps: 0, ease: 2.5, due: null, dueAt: null, state: 'new',
       stepIndex: 0, lapses: 0, correct: 0, wrong: 0, hard: 0, easy: 0,
-      frontImage: null, backImage: null, updatedAt: null, ...c
+      frontImage: null, backImage: null, updatedAt: null, ...c,
+      correct: Number(c.correct) || 0,
+      wrong: Number(c.wrong) || 0,
+      hard: Number(c.hard) || 0,
+      easy: Number(c.easy) || 0,
     })),
     deletedCardIds: p.deletedCardIds || [],
     history: p.history || [],
