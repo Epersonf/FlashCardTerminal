@@ -189,7 +189,7 @@ function AnkiChart({ history, cards }) {
           return { key: dk, label, reviewed: 0, correct: 0, forecast, isFuture: true, isToday: false };
         } else {
           const entries = history.filter(h => h.date === dk);
-          return { key: dk, label, reviewed: entries.reduce((a, h) => a + h.reviewed, 0), correct: entries.reduce((a, h) => a + h.correct, 0), forecast: isToday ? cards.filter(isDue).length : 0, isFuture: false, isToday };
+          return { key: dk, label, reviewed: entries.reduce((a, h) => a + (h.total || (h.correct || 0) + (h.wrong || 0)), 0), correct: entries.reduce((a, h) => a + (h.correct || 0), 0), forecast: isToday ? cards.filter(isDue).length : 0, isFuture: false, isToday };
         }
       });
     }
@@ -198,16 +198,16 @@ function AnkiChart({ history, cards }) {
         const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - (11 - i) + (offset * 12));
         const mk = localDateKey(d).slice(0, 7);
         const entries = history.filter(h => h.date.startsWith(mk));
-        return { key: mk, label: d.toLocaleDateString('pt-BR', { month: 'short' }), reviewed: entries.reduce((a, h) => a + h.reviewed, 0), correct: entries.reduce((a, h) => a + h.correct, 0), isFuture: false, forecast: 0 };
+        return { key: mk, label: d.toLocaleDateString('pt-BR', { month: 'short' }), reviewed: entries.reduce((a, h) => a + (h.total || (h.correct || 0) + (h.wrong || 0)), 0), correct: entries.reduce((a, h) => a + (h.correct || 0), 0), isFuture: false, forecast: 0 };
       });
     }
     if (tab === 'ano') {
       const baseYear = new Date().getFullYear() + (offset * 6);
       const years = Array.from({ length: 6 }, (_, i) => String(baseYear - 5 + i));
-      return years.map(yr => { const e = history.filter(h => h.date.startsWith(yr)); return { key: yr, label: yr, reviewed: e.reduce((a, h) => a + h.reviewed, 0), correct: e.reduce((a, h) => a + h.correct, 0), isFuture: false, forecast: 0 }; });
+      return years.map(yr => { const e = history.filter(h => h.date.startsWith(yr)); return { key: yr, label: yr, reviewed: e.reduce((a, h) => a + (h.total || (h.correct || 0) + (h.wrong || 0)), 0), correct: e.reduce((a, h) => a + (h.correct || 0), 0), isFuture: false, forecast: 0 }; });
     }
     const subjects = [...new Set(cards.map(c => c.subject))];
-    return subjects.map(s => { const e = history.filter(h => h.subject === s); return { key: s, label: s.length > 9 ? s.slice(0, 9) + '...' : s, reviewed: e.reduce((a, h) => a + h.reviewed, 0), correct: e.reduce((a, h) => a + h.correct, 0), isFuture: false, forecast: 0 }; });
+    return subjects.map(s => { const e = history.filter(h => h.subject === s); return { key: s, label: s.length > 9 ? s.slice(0, 9) + '...' : s, reviewed: e.reduce((a, h) => a + (h.total || (h.correct || 0) + (h.wrong || 0)), 0), correct: e.reduce((a, h) => a + (h.correct || 0), 0), isFuture: false, forecast: 0 }; });
   }, [tab, offset, history, cards, td]);
 
   const maxVal = Math.max(...chartData.map(d => Math.max(d.reviewed, d.forecast)), 1);

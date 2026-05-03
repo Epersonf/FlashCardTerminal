@@ -466,11 +466,11 @@ function Dashboard({ cards, subjects, activeSubject, onStudy, onStudyAll, onAddC
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(300px,100%),1fr))', gap: '10px' }}>
-            {filtered.map(card => {
+            {filtered.map((card, _ci) => {
               const t = card.correct + card.wrong + (card.hard || 0) + (card.easy || 0), p = t === 0 ? null : Math.round((card.correct + (card.easy || 0)) / t * 100);
               const cardDue = isDue(card);
               return (
-                <div key={card.id} style={{ border: `1px solid ${cardDue ? 'var(--bdb)' : 'var(--bd)'}`, background: 'var(--bg2)', padding: '12px 14px', position: 'relative', animation: 'up .15s ease' }}>
+                <div key={card.id || `c${_ci}`} style={{ border: `1px solid ${cardDue ? 'var(--bdb)' : 'var(--bd)'}`, background: 'var(--bg2)', padding: '12px 14px', position: 'relative', animation: 'up .15s ease' }}>
                   {cardDue && <div style={{ fontSize: '9px', color: 'var(--yel)', letterSpacing: '0.1em', marginBottom: '5px' }}>VENCE AGORA</div>}
                   <div style={{ fontSize: '12px', color: 'var(--wh)', marginBottom: '8px', lineHeight: 1.5 }}><CardContent text={card.front} image={card.frontImage} color="var(--wh)" fontSize="12px" /></div>
                   <div style={{ fontSize: '11px', color: 'var(--mu)', lineHeight: 1.5, marginBottom: '8px' }}><CardContent text={card.back} image={card.backImage} color="var(--mu)" fontSize="11px" /></div>
