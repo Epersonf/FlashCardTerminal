@@ -105,7 +105,7 @@ function Header({ data, mode, onHome, onPomodoro, onFlashcards, onExport, onImpo
   return (
     <div style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--bd)', padding: '0 20px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <a className="glow" href="#home" onClick={e => navClick(e, onHome, '#home')} style={{ textDecoration: 'none', color: 'var(--g)', fontSize: '14px', fontWeight: 700, letterSpacing: '0.1em', cursor: 'pointer', opacity: mode === 'home' ? 1 : 0.6, transition: 'opacity .15s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = mode === 'home' ? 1 : 0.6}>> FLASHCARDS.SH</a>
+        <a className="glow" href="#home" onClick={e => navClick(e, onHome, '#home')} style={{ textDecoration: 'none', color: 'var(--g)', fontSize: '14px', fontWeight: 700, letterSpacing: '0.1em', cursor: 'pointer', opacity: mode === 'home' ? 1 : 0.6, transition: 'opacity .15s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = mode === 'home' ? 1 : 0.6}> FLASHCARDS.SH</a>
         <div style={{ display: 'flex', gap: '6px' }}>
           {[
             { label: 'HOME', m: 'home', fn: onHome },
@@ -207,7 +207,8 @@ function AnkiChart({ history, cards }) {
       const years = Array.from({ length: 6 }, (_, i) => String(baseYear - 5 + i));
       return years.map(yr => { const e = history.filter(h => h.date.startsWith(yr)); return { key: yr, label: yr, reviewed: e.reduce((a, h) => a + (h.total || (h.correct || 0) + (h.wrong || 0)), 0), correct: e.reduce((a, h) => a + (h.correct || 0), 0), isFuture: false, forecast: 0 }; });
     }
-    const subjects = [...new Set(cards.map(c => c.subject))];
+    const subjects = [...new Set(cards.map(c => c.subject).filter(s => s != null && s !== ''))];
+    if (subjects.length === 0) return [{ key: '_empty', label: '-', reviewed: 0, correct: 0, isFuture: false, forecast: 0 }];
     return subjects.map(s => { const e = history.filter(h => h.subject === s); return { key: s, label: s.length > 9 ? s.slice(0, 9) + '...' : s, reviewed: e.reduce((a, h) => a + (h.total || (h.correct || 0) + (h.wrong || 0)), 0), correct: e.reduce((a, h) => a + (h.correct || 0), 0), isFuture: false, forecast: 0 }; });
   }, [tab, offset, history, cards, td]);
 
